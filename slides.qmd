@@ -1,5 +1,5 @@
 ---
-title: "Is this normal? A new projection pursuit index to assess a sample against a multivariate null distribution."
+title: "Is this normal? A new projection pursuit index to assess a sample against a multivariate null distribution"
 author: "Dianne Cook <br> Econometrics and Business Statistics <br> Monash University <br> Joint with Ursula Laa, BOKU and Annalisa Calvi, Monash"
 format:
   revealjs: 
