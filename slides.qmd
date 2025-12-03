@@ -104,7 +104,7 @@ Combining PP with a tour algorithm provides a way to watch the optimisation, and
 :::: {.columns}
 ::: {.column}
 
-Generate a normal sample (here from a $4\text{-}D$ multivariate normal), and overlay with measured sample.
+Generate a reference sample (here it is from $4\text{-}D$ multivariate normal), and overlay with the new sample.
 
 ![](gifs/fig2b.gif)
 
@@ -113,7 +113,7 @@ Generate a normal sample (here from a $4\text{-}D$ multivariate normal), and ove
 
 ::: {.fragment}
 
-Or, generate a confidence region from the hypothesised distribution (still $4\text{-}D$ ).
+Or, generate a confidence region from the reference distribution (here a $4\text{-}D$ ellipse because reference distribution is multivariate normal).
 
 ![](gifs/fig2a.gif)
 
@@ -124,26 +124,24 @@ Or, generate a confidence region from the hypothesised distribution (still $4\te
 
 ## BUT {.center}
 
-How do you measure that the sample is inside or outside the confidence region, or in what subspaces is it more different?
+How do you see that an **observation is outside a confidence region**, or the subspaces/directions it is outside?
 
-How do you get the optimisation to ignore one of the point sets?
+How do you get the optimisation to **ignore one of the point sets**?
 
-## Modification for normality comparison
+## New PP Index
 
-Let $P$ indicate a 2D projection basis ($p\times 2$). The normal sample is from a $N_p(\mathbfit{\mu}, \Sigma)$.
-
-Mahalanobis distance measures the distance from the center $\mathbfit{\mu}$ in units of standard deviations, and is computed using the variance-covariance matrix $\Sigma$.
+Let $P$ indicate a 2D projection basis ($p\times 2$). The reference sample is from $N_p(\mathbfit{\mu}, \Sigma)$. Mahalanobis distance measures the distance between an observation $\mathbfit{x}$ and the center $\mathbfit{\mu}$ using the variance-covariance matrix $\Sigma$.
 
 $$
 d_M (\mathbfit{x}) = \sqrt{(\mathbfit{x}-\mathbfit{\mu}) \Sigma^{-1}(\mathbfit{x}-\mathbfit{\mu})^T}
 $$
 
-We define our new index as
+We define the **new PP index** as
 
 $$
 \sum_{\mathbfit{w} \in W} (\mathbfit{w} - \mathbfit{\mu}) P (P^T\Sigma P)^{-1}P^T(\mathbfit{w} - \mathbfit{\mu})^T.
 $$
-where $W = \{\mathbfit{x}: (\mathbfit{x}-\mathbfit{\mu}) \Sigma^{-1}(\mathbfit{x}-\mathbfit{\mu})^T > c^2\}$ is the set of points we want to compare with the normal. 
+where $W = \{\mathbfit{x}: (\mathbfit{x}-\mathbfit{\mu}) \Sigma^{-1}(\mathbfit{x}-\mathbfit{\mu})^T > c^2\}$ is the subset of points being compared with the normal. 
 
 ## Drawing ellipses in projections
 
@@ -156,7 +154,7 @@ $$
 
 where $c$ is a constant that depends on a specific confidence level.
 
-Let $\mathbfit{y}$ be a $2\text{-}D$ vector representing a point in $2\text{-}D$, and let $\mathbfit{\mu}_2 := \mathbfit{\mu} P$ denote the projected mean.
+Let $\mathbfit{y}$ be a $2\text{-}D$ vector representing a point in $2\text{-}D$, and let $\mathbfit{\mu}_2$ denote the projected mean.
 
 The projection of the $p\text{-}D$ ellipsoid onto the $2\text{-}D$ projection space described by $P$ has the equation
 
@@ -164,7 +162,7 @@ $$
 (\mathbfit{y} - \mathbfit{\mu}_2)(P^T \Sigma P)^{-1}(\mathbfit{y} - \mathbfit{\mu}_2)^T = c^2.
 $$
 
-## Optimisation and reference ellipse
+## How it works
 
 :::: {.columns}
 ::: {.column}
@@ -265,34 +263,188 @@ Can also work for longitudinal data - here being a sample from an aging male (si
 ## heatmap
 
 ::: {style="font-size: 70%;"}
-Example from [Marcus Mayrhofer and Peter Filzmoser (2023)](https://doi.org/10.1016/j.ecosta.2023.04.003) on robust statistics. 
+Example from [Marcus Mayrhofer and Peter Filzmoser (2023)](https://doi.org/10.1016/j.ecosta.2023.04.003) using robust statistics to examine weather extremes in Vienna, Austria. 
 :::
 
-![](images/weather3.png){width=80%}
+![](images/weather3adj.png){width=80%}
 
 ## anomaly tour
+
+```{r}
+#| eval: false
+#| echo: false
+library(ShapleyOutlier)
+library(robustHD)
+library(tidyverse)
+library(tourr)
+library(fpc)
+
+data("WeatherVienna")
+# first part of the code is preprocessing
+# this is following the vignette from the package
+# see https://cran.r-project.org/web/packages/ShapleyOutlier/vignettes/ShapleyOutlier_examples.html
+weather_summer <- WeatherVienna |> dplyr::select(-c(`t`, t_max, t_min, p_max, p_min)) |>
+  drop_na() |>
+  filter(month %in% c("JUN", "JUL", "AUG")) |>
+  filter(year >= 1955) |>
+  group_by(year) |>
+  dplyr::select(-month) |>
+  summarise(across(.cols = everything(), function(x) mean(x)))
+
+X <- weather_summer |> dplyr::select(-c(num_frost, num_ice, year))
+rownames(X) <- weather_summer$year
+#> Warning: Setting row names on a tibble is deprecated.
+X <- robStandardize(X)
+
+set.seed(1)
+MCD <- covMcd(X, alpha = 0.5, nsamp = "best")
+#> Warning in .fastmcd(x, h, nsamp, nmini, kmini, trace = as.integer(trace)): 'nsamp = "best"' allows maximally 100000 subsets;
+#> computing these subsets of size 17 out of 68
+mu <-MCD$center
+Sigma <- MCD$cov
+
+###### preprocessing done
+# this is now our own code to work with these inputs
+
+# start with finding outlying points and clustering
+size_weather <- qchisq(2*pnorm(5)-1, ncol(X))
+dist_pd <- mahalanobis(X, mu, Sigma)
+X_outside <- X[dist_pd > size_weather,]
+X_outside_scaled <- t(apply(X_outside, 1,
+                    function(x) (x)/sqrt(sum(x^2))))
+for(k in 2:6){
+  set.seed(150)
+  X_km <- kmeans(X_outside_scaled, k)
+  cs <- cluster.stats(dist(X_outside_scaled), X_km$cluster)
+  print(cs$dunn)
+}
+
+#preferred solution 5 clusters using dunn/dunn2 index
+set.seed(150)
+X_km <- kmeans(X_outside_scaled, 5)
+# making a vector that labels all points
+# use 0 to indicate point is not an outlier
+cluster_labels_all <- as_tibble(X,
+                               rownames = "year") |>
+  left_join(as_tibble(X_km$cluster,
+                              rownames = "year")) |>
+  mutate(cluster = if_else(is.na(value), 0, value)) |>
+  arrange(cluster)
+cluster_labels <- factor(cluster_labels_all$cluster,
+                         levels = c(1:5, 0))
+ptshape <- factor(ifelse(cluster_labels_all$cluster>0, "out", "in"))
+
+X_sorted <- cluster_labels_all |>
+  select(-year, -cluster, -value) |>
+  rename(atmax = avg_t_max,
+         atmin = avg_t_min,
+         nsumm = num_summer,
+         nheat = num_heat,
+         sunh = sun_h,
+         nclear = num_clear,
+         ncloud = num_cloud,
+         rh = rel_hum,
+         rhmax = rel_hum_max,
+         rhmin = rel_hum_min,
+         vwind = wind_v,
+         vw60 = num_wind_v60,
+         vwmax = wind_v_max,
+         prec = precp_sum,
+         nprec = num_precp_01)
+
+set.seed(22)
+render_gif(as.matrix(X_sorted), 
+           guided_anomaly_tour(anomaly_index(),
+                               ellipse=as.matrix(Sigma),
+                               ellc = size_weather,
+                               ellmu = mu), 
+           display_xy(ellipse=as.matrix(Sigma), ellc = size_weather,
+             ellmu = mu, cex=2, 
+             axes="bottomleft",
+             col = as.factor(cluster_labels),
+             pch = ptshape,
+             palette = c("#040404", "#55125D", "#A01975", "#E45358", "#F7AA2D", "#559999"),
+             shapeset = c(1, 16),
+             center = FALSE, rescale = FALSE,
+             ellmarks = FALSE, axislablong = TRUE),
+           gif_file = "gifs/weather_all.gif",
+           frames = 500,
+           width = 400,
+           height = 400,
+           loop = FALSE
+)
+
+
+# color codes
+#"#201158" "#005260" "#007C46" "#999600" "#F9A391" "#FFCEF4"
+# "#005260"
+# wait for getting random starting planes for
+# better results
+set.seed(55)
+render_gif(X_sorted[cluster_labels == 4,], 
+           guided_anomaly_tour(anomaly_index(),
+                               ellipse=as.matrix(Sigma),
+                               ellc = size_weather,
+                               ellmu = mu), 
+           display_xy(ellipse=as.matrix(Sigma), ellc = size_weather,
+             ellmu = mu,
+             axes="bottomleft",
+             col = "#E45358", pch=16, half_range = 7, cex = 2,
+             center = FALSE, rescale = FALSE,
+             ellmarks = FALSE, axislablong = TRUE),
+           gif_file = "gifs/weather_c4.gif",
+           frames = 500,
+           width = 400,
+           height = 400,
+           loop = FALSE
+)
+
+```
 
 
 :::: {.columns}
 ::: {.column width=30%}
 
-![](images/weather1.png)
+![](gifs/weather_all.gif)
 
 :::
 ::: {.column width=30%}
 
-![](images/weather2.png)
+::: {.fragment}
 
+Extremes in different directions. Cluster the points that are considered extreme, and run projection pursuit on each group. 
+
+:::
+
+:::
+::: {.column width=30%}
+
+::: {.fragment}
+
+![](gifs/weather_c4.gif)
+:::
 :::
 
 ::::
 
 :::
 
-## Future directions
+## Summary and future directions
 
-- Grouping/clustering cases before projection pursuit. 
-- Other reference distributions, with shapes represented by convex hulls perhaps.
+:::: {.columns}
+::: {.column}
+
+- This provides an alternative way to examine groups of observations relative to a reference distribtuion. 
+- It might be also be used for outlier detection. 
+
+:::
+::: {.column}
+
+- More approaches to grouping/clustering cases before projection pursuit could be explored. 
+- Incorporate other reference distributions, possibly with shapes represented by convex hulls.
+- Some of the outlyingness methods in robust statistics could also be adapted into PP indexes specifically for outlier detection.
+:::
+::::
 
 ## References and acknowledgements
 

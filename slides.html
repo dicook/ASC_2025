@@ -234,31 +234,30 @@ Dianne Cook <br> Econometrics and Business Statistics <br> Monash University <br
 <h2>Ways to make comparisons</h2>
 <div class="columns">
 <div class="column">
-<p>Generate a normal sample (here from a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mtext mathvariant="normal">-</mtext><mi>D</mi></mrow><annotation encoding="application/x-tex">4\text{-}D</annotation></semantics></math> multivariate normal), and overlay with measured sample.</p>
+<p>Generate a reference sample (here it is from <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mtext mathvariant="normal">-</mtext><mi>D</mi></mrow><annotation encoding="application/x-tex">4\text{-}D</annotation></semantics></math> multivariate normal), and overlay with the new sample.</p>
 <p><img data-src="gifs/fig2b.gif"></p>
 </div><div class="column">
 <div class="fragment">
-<p>Or, generate a confidence region from the hypothesised distribution (still <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mtext mathvariant="normal">-</mtext><mi>D</mi></mrow><annotation encoding="application/x-tex">4\text{-}D</annotation></semantics></math> ).</p>
+<p>Or, generate a confidence region from the reference distribution (here a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mtext mathvariant="normal">-</mtext><mi>D</mi></mrow><annotation encoding="application/x-tex">4\text{-}D</annotation></semantics></math> ellipse because reference distribution is multivariate normal).</p>
 <p><img data-src="gifs/fig2a.gif"></p>
 </div>
 </div></div>
 </section>
 <section id="but" class="slide level2 center">
 <h2>BUT</h2>
-<p>How do you measure that the sample is inside or outside the confidence region, or in what subspaces is it more different?</p>
-<p>How do you get the optimisation to ignore one of the point sets?</p>
+<p>How do you see that an <strong>observation is outside a confidence region</strong>, or the subspaces/directions it is outside?</p>
+<p>How do you get the optimisation to <strong>ignore one of the point sets</strong>?</p>
 </section>
-<section id="modification-for-normality-comparison" class="slide level2">
-<h2>Modification for normality comparison</h2>
-<p>Let <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math> indicate a 2D projection basis (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>×</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">p\times 2</annotation></semantics></math>). The normal sample is from a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>p</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝝁</mi><mo>,</mo><mi>Σ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">N_p(\mathbfit{\mu}, \Sigma)</annotation></semantics></math>.</p>
-<p>Mahalanobis distance measures the distance from the center <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝝁</mi><annotation encoding="application/x-tex">\mathbfit{\mu}</annotation></semantics></math> in units of standard deviations, and is computed using the variance-covariance matrix <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Σ</mi><annotation encoding="application/x-tex">\Sigma</annotation></semantics></math>.</p>
+<section id="new-pp-index" class="slide level2">
+<h2>New PP Index</h2>
+<p>Let <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math> indicate a 2D projection basis (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>×</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">p\times 2</annotation></semantics></math>). The reference sample is from <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mi>p</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝝁</mi><mo>,</mo><mi>Σ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">N_p(\mathbfit{\mu}, \Sigma)</annotation></semantics></math>. Mahalanobis distance measures the distance between an observation <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝒙</mi><annotation encoding="application/x-tex">\mathbfit{x}</annotation></semantics></math> and the center <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝝁</mi><annotation encoding="application/x-tex">\mathbfit{\mu}</annotation></semantics></math> using the variance-covariance matrix <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Σ</mi><annotation encoding="application/x-tex">\Sigma</annotation></semantics></math>.</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>M</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝒙</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msqrt><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝒙</mi><mo>−</mo><mi>𝝁</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>Σ</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝒙</mi><mo>−</mo><mi>𝝁</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup></mrow></msqrt></mrow><annotation encoding="application/x-tex">
 d_M (\mathbfit{x}) = \sqrt{(\mathbfit{x}-\mathbfit{\mu}) \Sigma^{-1}(\mathbfit{x}-\mathbfit{\mu})^T}
 </annotation></semantics></math></p>
-<p>We define our new index as</p>
+<p>We define the <strong>new PP index</strong> as</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munder><mo>∑</mo><mrow><mi>𝒘</mi><mo>∈</mo><mi>W</mi></mrow></munder><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝒘</mi><mo>−</mo><mi>𝝁</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>P</mi><msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>P</mi><mi>T</mi></msup><mi>Σ</mi><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup><msup><mi>P</mi><mi>T</mi></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝒘</mi><mo>−</mo><mi>𝝁</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup><mi>.</mi></mrow><annotation encoding="application/x-tex">
 \sum_{\mathbfit{w} \in W} (\mathbfit{w} - \mathbfit{\mu}) P (P^T\Sigma P)^{-1}P^T(\mathbfit{w} - \mathbfit{\mu})^T.
-</annotation></semantics></math> where <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>𝒙</mi><mo>:</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝒙</mi><mo>−</mo><mi>𝝁</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>Σ</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝒙</mi><mo>−</mo><mi>𝝁</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup><mo>&gt;</mo><msup><mi>c</mi><mn>2</mn></msup><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">W = \{\mathbfit{x}: (\mathbfit{x}-\mathbfit{\mu}) \Sigma^{-1}(\mathbfit{x}-\mathbfit{\mu})^T &gt; c^2\}</annotation></semantics></math> is the set of points we want to compare with the normal.</p>
+</annotation></semantics></math> where <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>𝒙</mi><mo>:</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝒙</mi><mo>−</mo><mi>𝝁</mi><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>Σ</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝒙</mi><mo>−</mo><mi>𝝁</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup><mo>&gt;</mo><msup><mi>c</mi><mn>2</mn></msup><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">W = \{\mathbfit{x}: (\mathbfit{x}-\mathbfit{\mu}) \Sigma^{-1}(\mathbfit{x}-\mathbfit{\mu})^T &gt; c^2\}</annotation></semantics></math> is the subset of points being compared with the normal.</p>
 </section>
 <section id="drawing-ellipses-in-projections" class="slide level2">
 <h2>Drawing ellipses in projections</h2>
@@ -267,14 +266,14 @@ d_M (\mathbfit{x}) = \sqrt{(\mathbfit{x}-\mathbfit{\mu}) \Sigma^{-1}(\mathbfit{x
 (\mathbfit{x}-\mathbfit{\mu}) \Sigma^{-1}(\mathbfit{x}-\mathbfit{\mu})^T = c^2
 </annotation></semantics></math></p>
 <p>where <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math> is a constant that depends on a specific confidence level.</p>
-<p>Let <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝒚</mi><annotation encoding="application/x-tex">\mathbfit{y}</annotation></semantics></math> be a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mtext mathvariant="normal">-</mtext><mi>D</mi></mrow><annotation encoding="application/x-tex">2\text{-}D</annotation></semantics></math> vector representing a point in <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mtext mathvariant="normal">-</mtext><mi>D</mi></mrow><annotation encoding="application/x-tex">2\text{-}D</annotation></semantics></math>, and let <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝝁</mi><mn>2</mn></msub><mo>:=</mo><mi>𝝁</mi><mi>P</mi></mrow><annotation encoding="application/x-tex">\mathbfit{\mu}_2 := \mathbfit{\mu} P</annotation></semantics></math> denote the projected mean.</p>
+<p>Let <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝒚</mi><annotation encoding="application/x-tex">\mathbfit{y}</annotation></semantics></math> be a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mtext mathvariant="normal">-</mtext><mi>D</mi></mrow><annotation encoding="application/x-tex">2\text{-}D</annotation></semantics></math> vector representing a point in <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mtext mathvariant="normal">-</mtext><mi>D</mi></mrow><annotation encoding="application/x-tex">2\text{-}D</annotation></semantics></math>, and let <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>𝝁</mi><mn>2</mn></msub><annotation encoding="application/x-tex">\mathbfit{\mu}_2</annotation></semantics></math> denote the projected mean.</p>
 <p>The projection of the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mtext mathvariant="normal">-</mtext><mi>D</mi></mrow><annotation encoding="application/x-tex">p\text{-}D</annotation></semantics></math> ellipsoid onto the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mtext mathvariant="normal">-</mtext><mi>D</mi></mrow><annotation encoding="application/x-tex">2\text{-}D</annotation></semantics></math> projection space described by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math> has the equation</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝒚</mi><mo>−</mo><msub><mi>𝝁</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><msup><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>P</mi><mi>T</mi></msup><mi>Σ</mi><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mi>−</mi><mn>1</mn></mrow></msup><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝒚</mi><mo>−</mo><msub><mi>𝝁</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>T</mi></msup><mo>=</mo><msup><mi>c</mi><mn>2</mn></msup><mi>.</mi></mrow><annotation encoding="application/x-tex">
 (\mathbfit{y} - \mathbfit{\mu}_2)(P^T \Sigma P)^{-1}(\mathbfit{y} - \mathbfit{\mu}_2)^T = c^2.
 </annotation></semantics></math></p>
 </section>
-<section id="optimisation-and-reference-ellipse" class="slide level2">
-<h2>Optimisation and reference ellipse</h2>
+<section id="how-it-works" class="slide level2">
+<h2>How it works</h2>
 <div class="columns">
 <div class="column">
 <p>The null being from a normal population is represented in the projection using an ellipse, the projection of the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-D confidence ellipse.</p>
@@ -318,27 +317,42 @@ d_M (\mathbfit{x}) = \sqrt{(\mathbfit{x}-\mathbfit{\mu}) \Sigma^{-1}(\mathbfit{x
 <div class="tab-content">
 <div id="tabset-1-1">
 <div style="font-size: 70%;">
-<p>Example from <a href="https://doi.org/10.1016/j.ecosta.2023.04.003">Marcus Mayrhofer and Peter Filzmoser (2023)</a> on robust statistics.</p>
+<p>Example from <a href="https://doi.org/10.1016/j.ecosta.2023.04.003">Marcus Mayrhofer and Peter Filzmoser (2023)</a> using robust statistics to examine weather extremes in Vienna, Austria.</p>
 </div>
-<p><img data-src="images/weather3.png" style="width:80.0%"></p>
+<p><img data-src="images/weather3adj.png" style="width:80.0%"></p>
 </div>
 <div id="tabset-1-2">
 <div class="columns">
 <div class="column" style="width:30%;">
-<p><img data-src="images/weather1.png"></p>
+<p><img data-src="gifs/weather_all.gif"></p>
 </div><div class="column" style="width:30%;">
-<p><img data-src="images/weather2.png"></p>
+<div class="fragment">
+<p>Extremes in different directions. Cluster the points that are considered extreme, and run projection pursuit on each group.</p>
+</div>
+</div><div class="column" style="width:30%;">
+<div class="fragment">
+<p><img data-src="gifs/weather_c4.gif"></p>
+</div>
 </div></div>
 </div>
 </div>
 </div>
 </section>
-<section id="future-directions" class="slide level2">
-<h2>Future directions</h2>
+<section id="summary-and-future-directions" class="slide level2">
+<h2>Summary and future directions</h2>
+<div class="columns">
+<div class="column">
 <ul>
-<li>Grouping/clustering cases before projection pursuit.</li>
-<li>Other reference distributions, with shapes represented by convex hulls perhaps.</li>
+<li>This provides an alternative way to examine groups of observations relative to a reference distribtuion.</li>
+<li>It might be also be used for outlier detection.</li>
 </ul>
+</div><div class="column">
+<ul>
+<li>More approaches to grouping/clustering cases before projection pursuit could be explored.</li>
+<li>Incorporate other reference distributions, possibly with shapes represented by convex hulls.</li>
+<li>Some of the outlyingness methods in robust statistics could also be adapted into PP indexes specifically for outlier detection.</li>
+</ul>
+</div></div>
 </section>
 <section id="references-and-acknowledgements" class="slide level2">
 <h2>References and acknowledgements</h2>
