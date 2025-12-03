@@ -1,0 +1,98 @@
+/* -------------------------------------------------------------
+   CLOUDY DREAMSCAPE THEME (applies only to slides with class .dreamscape)
+-------------------------------------------------------------- */
+
+/* Soft-cloud gradient background */
+section.dreamscape {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 30% 20%, #ffffff40, #d2e3ff20 60%, #aab8ff10 100%),
+              linear-gradient(135deg, #7f8bd4, #a7b4ff, #d6e0ff, #f7faff);
+  background-size: 400% 400%;
+  animation: dreamySky 22s ease-in-out infinite;
+  color: #eef2ff !important;
+  padding: 0px;
+  border-radius: 0px;
+}
+
+/* Gentle glow on headings */
+section.dreamscape h1,
+section.dreamscape h2,
+section.dreamscape h3 {
+  color: #ffffff;
+  text-shadow: 0 0 30px rgba(255,255,255,0.8);
+}
+
+/* Soft cloud-mist text */
+section.dreamscape p,
+section.dreamscape li {
+  color: #f5f7ff !important;
+  text-shadow: 0 0 12px rgba(255,255,255,0.3);
+}
+
+/* --- Cloud Layers: drifting, semi-transparent --- */
+
+section.dreamscape::before,
+section.dreamscape::after,
+section.dreamscape .cloud {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 120%;
+  left: -50%;
+  background: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='600' height='300'>\
+<filter id='blur'><feGaussianBlur stdDeviation='28' /></filter>\
+<ellipse cx='150' cy='150' rx='180' ry='70' fill='white' filter='url(%23blur)' opacity='0.35'/>\
+<ellipse cx='450' cy='120' rx='160' ry='60' fill='white' filter='url(%23blur)' opacity='0.30'/>\
+</svg>") repeat-x;
+  animation: driftClouds 60s linear infinite;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+section.dreamscape::before {
+  top: -10%;
+  animation-duration: 75s;
+  opacity: 0.4;
+}
+
+section.dreamscape::after {
+  top: 20%;
+  animation-duration: 95s;
+  opacity: 0.3;
+}
+
+section.dreamscape .cloud {
+  top: 50%;
+  animation-duration: 110s;
+  opacity: 0.25;
+}
+
+@keyframes driftClouds {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Panel-like content region */
+section.dreamscape .slide-content {
+  background: rgba(255,255,255,0.10);
+  backdrop-filter: blur(25px);
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: 0 0 50px rgba(255,255,255,0.25);
+}
+
+/* Background movement */
+@keyframes dreamySky {
+  0% {background-position: 0% 0%;}
+  50% {background-position: 100% 100%;}
+  100% {background-position: 0% 0%;}
+}
+
+.dreamy-edges {
+  -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+  mask-image: radial-gradient(circle, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+  mask-size: cover;
+  -webkit-mask-size: cover;
+}

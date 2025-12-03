@@ -1,0 +1,311 @@
+---
+title: "Is this normal? A new projection pursuit index to assess a sample against a multivariate null distribution."
+author: "Dianne Cook <br> Econometrics and Business Statistics <br> Monash University <br> Joint with Ursula Laa, BOKU and Annalisa Calvi, Monash"
+format:
+  revealjs: 
+    theme: 
+      - default
+      - custom.scss
+    slide-number: c/t
+    transition: fade
+    background-transition: fade
+    slide-tone: false
+    width: 1280
+    height: 800
+    margin: 0.05
+    chalkboard: false
+code-line-numbers: false
+message: false
+highlight-style: pygments
+html-math-method: mathml
+code-fold: true
+footer: "ASC 2025 - https://dicook.github.io/ASC_2025/"
+---
+
+```{r, include = FALSE}
+library(tidyverse)
+#library(colorspace)
+library(patchwork)
+library(tourr)
+#library(detourr)
+library(mulgar)
+#library(mvtnorm)
+
+options(width = 200)
+knitr::opts_chunk$set(
+  fig.width = 4,
+  fig.height = 4,
+  out.width = "80%",
+  fig.align = "center",
+  dev.args = list(bg = 'transparent'),
+  fig.retina = 3,
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  cache = FALSE
+)
+theme_set(ggthemes::theme_gdocs(base_size = 12) +
+  theme(plot.background = 
+        element_rect(fill = 'transparent', colour = NA),
+        axis.line.x = element_line(color = "black", 
+                                   linetype = "solid"),
+        axis.line.y = element_line(color = "black", 
+                                   linetype = "solid"),
+        plot.title.position = "plot",
+        plot.title = element_text(size = 18),
+        panel.background  = 
+          element_rect(fill = 'transparent', colour = "black"),
+        legend.background = 
+          element_rect(fill = 'transparent', colour = NA),
+        legend.key        = 
+          element_rect(fill = 'transparent', colour = NA)
+  ) 
+)
+```
+
+## Motivation {.center style="text-align: center;" background-image="images/clinical-trials.jpg" background-position="cover" background-opacity="50%"}
+
+
+
+::: {style="font-size: 50%; text-align: right;"}
+
+<br><br><br><br><br><br><br><br>
+
+Image <a href="http://www.nyphotographic.com/">Nick Youngson</a> <a rel="license" href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a> <a href="http://pix4free.org/">Pix4free</a>
+
+:::
+
+
+## Outline
+
+- About projection pursuit
+- The guided tour
+- The PP index
+- Examples
+
+## Projection pursuit and guided tour
+
+:::: {.columns}
+::: {.column}
+
+**Projection pursuit (PP)** defines a quantitative criterion for the **interestingness of a projection** (a projection pursuit index), and searches the space of possible projections for the most interesting one to display. *Principal component analysis can be considered to the a special case of PP*.
+
+:::
+::: {.column}
+
+::: {.fragment}
+Combining PP with a tour algorithm provides a way to watch the optimisation, and see more projections than just the best. This is called a **projection pursuit guided tour**.
+:::
+:::
+::::
+
+## Ways to make comparisons
+
+:::: {.columns}
+::: {.column}
+
+Generate a normal sample (here from a $4\text{-}D$ multivariate normal), and overlay with measured sample.
+
+![](gifs/fig2b.gif)
+
+:::
+::: {.column}
+
+::: {.fragment}
+
+Or, generate a confidence region from the hypothesised distribution (still $4\text{-}D$ ).
+
+![](gifs/fig2a.gif)
+
+:::
+
+:::
+::::
+
+## BUT {.center}
+
+How do you measure that the sample is inside or outside the confidence region, or in what subspaces is it more different?
+
+How do you get the optimisation to ignore one of the point sets?
+
+## Modification for normality comparison
+
+Let $P$ indicate a 2D projection basis ($p\times 2$). The normal sample is from a $N_p(\mathbfit{\mu}, \Sigma)$.
+
+Mahalanobis distance measures the distance from the center $\mathbfit{\mu}$ in units of standard deviations, and is computed using the variance-covariance matrix $\Sigma$.
+
+$$
+d_M (\mathbfit{x}) = \sqrt{(\mathbfit{x}-\mathbfit{\mu}) \Sigma^{-1}(\mathbfit{x}-\mathbfit{\mu})^T}
+$$
+
+We define our new index as
+
+$$
+\sum_{\mathbfit{w} \in W} (\mathbfit{w} - \mathbfit{\mu}) P (P^T\Sigma P)^{-1}P^T(\mathbfit{w} - \mathbfit{\mu})^T.
+$$
+where $W = \{\mathbfit{x}: (\mathbfit{x}-\mathbfit{\mu}) \Sigma^{-1}(\mathbfit{x}-\mathbfit{\mu})^T > c^2\}$ is the set of points we want to compare with the normal. 
+
+## Drawing ellipses in projections
+
+Let $\mathbfit{x}$ be a $p\text{-}D$ vector. A $p\text{-}D$ ellipsoid corresponding to a given
+variance-covariance ($\Sigma$) and mean vector ($\mathbfit{\mu}$) is described by the equation
+
+$$
+(\mathbfit{x}-\mathbfit{\mu}) \Sigma^{-1}(\mathbfit{x}-\mathbfit{\mu})^T = c^2
+$$
+
+where $c$ is a constant that depends on a specific confidence level.
+
+Let $\mathbfit{y}$ be a $2\text{-}D$ vector representing a point in $2\text{-}D$, and let $\mathbfit{\mu}_2 := \mathbfit{\mu} P$ denote the projected mean.
+
+The projection of the $p\text{-}D$ ellipsoid onto the $2\text{-}D$ projection space described by $P$ has the equation
+
+$$
+(\mathbfit{y} - \mathbfit{\mu}_2)(P^T \Sigma P)^{-1}(\mathbfit{y} - \mathbfit{\mu}_2)^T = c^2.
+$$
+
+## Optimisation and reference ellipse
+
+:::: {.columns}
+::: {.column}
+The null being from a normal population is represented in the projection using an ellipse, the projection of the $p$-D confidence ellipse. 
+:::
+
+::: {.column}
+
+![](gifs/anomaly.gif)
+
+:::
+::::
+
+## Implementation
+
+:::: {.columns}
+::: {.column}
+This method is implemented in the [tourr](http://ggobi.github.io/tourr/) package. 
+:::
+
+::: {.column}
+
+```{r}
+#| eval: false
+#| echo: false
+# Code to generate data for Fig 3
+set.seed(929)
+vc_null <- matrix(rep(0.5, 5*5), ncol=5)
+diag(vc_null) <- 1
+m_null <- rep(0, 5)
+vc_samp <- matrix(rep(0, 5*5), ncol=5)
+diag(vc_samp) <- 1
+vc_samp[4,5] <- -0.47
+vc_samp[5,4] <- -0.56
+vc_samp <- vc_samp*0.1
+m_samp <- c(0, 0, 0, 1.9, 2.3)
+samp <- as.data.frame(rmvn(6, 
+                           mn = m_samp, 
+                           vc = vc_samp))
+set.seed(913) 
+render_gif(samp, 
+           guided_anomaly_tour(anomaly_index(),
+                               ellipse=vc_null), 
+           display_xy(ellipse=vc_null, 
+                      axes = "bottomleft", 
+                      half_range=5, center=FALSE),
+           gif_file = "gifs/anomaly.gif",
+           frames = 500,
+           width = 400,
+           height = 400)
+```
+
+```{r}
+#| eval: false
+#| echo: true
+#| code-fold: false
+library(tourr)
+animate_xy(samp, 
+  guided_anomaly_tour(anomaly_index(),
+  ellipse=vc_null), ellipse=vc_null, 
+  axes = "bottomleft", half_range=5, 
+  center=FALSE)
+```
+
+
+:::
+::::
+
+
+## Application: Liver function tests
+
+:::: {.columns}
+::: {.column}
+
+Similar to data on women's liver function. 
+
+![](gifs/women.gif)
+
+:::
+
+::: {.column}
+::: {.fragment}
+
+Can also work for longitudinal data - here being a sample from an aging male (simulated). 
+
+![](gifs/w_long.gif)
+
+:::
+:::
+::::
+
+## Application: weather extremes
+
+
+::: {.panel-tabset}
+
+
+## heatmap
+
+::: {style="font-size: 70%;"}
+Example from [Marcus Mayrhofer and Peter Filzmoser (2023)](https://doi.org/10.1016/j.ecosta.2023.04.003) on robust statistics. 
+:::
+
+![](images/weather3.png){width=80%}
+
+## anomaly tour
+
+
+:::: {.columns}
+::: {.column width=30%}
+
+![](images/weather1.png)
+
+:::
+::: {.column width=30%}
+
+![](images/weather2.png)
+
+:::
+
+::::
+
+:::
+
+## Future directions
+
+- Grouping/clustering cases before projection pursuit. 
+- Other reference distributions, with shapes represented by convex hulls perhaps.
+
+## References and acknowledgements
+
+::: {style="font-size: 90%;"}
+
+- Calvi, Laa, Cook (2024) [Is this normal? A new projection pursuit index to assess a sample against a multivariate null distribution](https://github.com/uschiLaa/anomaly_ppi)
+- Cook and Laa (2025) [Interactively exploring high-dimensional data and models in R](https://dicook.github.io/mulgar_book/)
+- Wickham et al (2015) [Visualizing statistical models: Removing the blindfold](https://doi.org/10.1002/sam.11271)
+- [Flatland: A Romance of Many Dimensions (1884) Edwin Abbott](https://en.wikipedia.org/wiki/Flatland)
+- R package: [tourr](http://ggobi.github.io/tourr/).
+
+Slides made in [Quarto](https://quarto.org/), with code on the website of the paper.  
+
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+:::
+
